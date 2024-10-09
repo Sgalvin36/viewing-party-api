@@ -12,11 +12,10 @@ class Api::V1::MoviesController < ApplicationController
         render json: MovieSerializer.format_movie_response(response.body) if response.status == 200
     end
 
-    # def show
-    #     conn = Faraday.new(url: "https://api.themoviedb.org/3/")
-    #     response = conn.get("discover/movie") do |req|
-    #         req.params["id"] = 
-    #         req.params["api_key"] = Rails.application.credentials.the_movie_db[:key]
-    #     end
-    # end
+    def show
+        if params["id"] != nil
+            response = MovieDbService.fetch_data("movie/#{params["id"]}?append_to_response=reviews,credits")
+        end
+        render json: MovieSerializer.format_movie(response.body) if response.status == 200
+    end
 end

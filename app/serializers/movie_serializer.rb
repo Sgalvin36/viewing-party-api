@@ -18,4 +18,28 @@ class MovieSerializer
             end
         }
     end
+
+    def self.format_movie(movie)
+        json = JSON.parse(movie)
+        binding.pry
+        { data:
+            {
+                id: json["id"].to_s,
+                type: "movie",
+                attributes: {
+                    title: json["title"],
+                    release_year: json["release_date"],
+                    vote_average: json["vote_average"],
+                    runtime: json["runtime"],
+                    genres: json["genres"],
+                    summary: json["overview"]
+            #         cast: json[""]
+            #         total_reviews:
+            #         reviews:
+
+            #     }
+            # }
+        }
+    end
 end
+

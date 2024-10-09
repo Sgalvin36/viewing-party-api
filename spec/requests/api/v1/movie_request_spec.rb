@@ -44,8 +44,11 @@ RSpec.describe "Movies API", type: :request do
         end
     end
 
-    # it "returns detailed results for a single movie", :vcr do
-    #     params[:id] = 140607
-    
-    # end
+    it "returns detailed results for a single movie, by id", :vcr do
+        params = { id: 140607 }
+
+        get api_v1_movie_path(params[:id])
+
+        expect(response).to be_successful
+    end
 end
