@@ -20,7 +20,11 @@ Run the application and test out some endpoints: `rails s`
 
 ### Top Rated Movies
 
-GET /api/v1/movies/index
+`GET /api/v1/movies/index`
 
 The API key for The Movie Database should be incorporated into the application. No authentication from the user is required at this time. It is passed through as a parameter when it makes the call to the external API.
 This will return JSON showing the top 20 best voted movies that is within the database.
+
+`GET /api/v1/movies/index` with params["query"]
+
+This will return JSON showing movies that match the search criteria.
