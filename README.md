@@ -15,3 +15,12 @@ Viewing Party is an application that allows users to explore movies and create a
 Spend some time familiarizing yourself with the functionality and structure of the application so far.
 
 Run the application and test out some endpoints: `rails s`
+
+## Movie Endpoints
+
+### Top Rated Movies
+
+GET /api/v1/movies/index
+
+The API key for The Movie Database should be incorporated into the application. No authentication from the user is required at this time. It is passed through as a parameter when it makes the call to the external API.
+This will return JSON showing the top 20 best voted movies that is within the database.
