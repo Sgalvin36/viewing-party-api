@@ -13,10 +13,15 @@ RSpec.describe "Movies API", type: :request do
         get api_v1_movies_path(params)
 
         expect(response).to be_successful
-        binding.pry
+        # binding.pry
         json = JSON.parse(response.body, symbolize_names: true)
 
-        expect(json[:data][:attributes]).to have_key[:title]
-        expect(json[:data][:attributes]).to have_key[:vote_average]
+        json[:data].each do |movie|
+            expect(movie).to have_key(:id)
+            expect(movie[:type]).to eq "movie"
+            expect(movie[:attributes]).to have_key(:title)
+            expect(movie[:attributes]).to have_key(:vote_average)
+        end
+        expect(json[:data].length).to eq 20
     end
 end

@@ -8,8 +8,8 @@ class Api::V1::MoviesController < ApplicationController
             req.params["sort_by"] = "popularity.desc"
             req.params["api_key"] = Rails.application.credentials.the_movie_db[:key]
         end
-        
-        render json: MovieSerializer.new(response) if response.status == 200
+
+        render json: MovieSerializer.format_movie_response(response.body) if response.status == 200
     end
 
 end
