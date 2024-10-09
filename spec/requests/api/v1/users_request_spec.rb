@@ -1,4 +1,4 @@
- require "rails_helper"
+require "rails_helper"
 
 RSpec.describe "Users API", type: :request do
   describe "Create User Endpoint" do
