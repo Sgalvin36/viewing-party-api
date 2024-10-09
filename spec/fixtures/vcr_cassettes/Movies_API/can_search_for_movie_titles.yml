@@ -2,15 +2,15 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.themoviedb.org/3/search/movie?query=Star%20Wars
+    uri: https://api.themoviedb.org/3/search/movie?action=index&controller=api/v1/movies&query=Star%20Wars
     body:
       encoding: US-ASCII
       string: ''
     headers:
-      User-Agent:
-      - Faraday v2.10.1
       Authorization:
       - Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjOTZiMjkwMTc3OWJiMzQ3NTdjOTI1OTZjYjI0MjViYyIsIm5iZiI6MTcyODQyMTc1MC44MDE0MDgsInN1YiI6IjY3MDU0ODlhMWI5NmI4ZWY0YzY5ZGE5ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.lGlv1PkzpsP5SsH38fbmUprCl8_4HpPlA7OaIXe4Nl0
+      User-Agent:
+      - Faraday v2.10.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -27,36 +27,34 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 09 Oct 2024 20:23:03 GMT
+      - Wed, 09 Oct 2024 21:25:53 GMT
       Server:
       - openresty
       Cache-Control:
-      - public, max-age=18698
+      - public, max-age=14928
       X-Memc:
       - HIT
       X-Memc-Key:
       - 6e73ab37df6c33cdea7c53426075afd8
       X-Memc-Age:
-      - '9363'
+      - '13133'
       X-Memc-Expires:
-      - '18698'
+      - '14928'
       Etag:
       - W/"07c6943674bce52168ef03ff2ebbe470"
       Vary:
       - Accept-Encoding,accept-encoding
       - Origin
       X-Cache:
-      - Hit from cloudfront
+      - Miss from cloudfront
       Via:
-      - 1.1 d9fe97589e952f97209f7a422c89d876.cloudfront.net (CloudFront)
+      - 1.1 befcfd7ee847a3c890471f27612dbcde.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - DEN52-P2
       Alt-Svc:
       - h3=":443"; ma=86400
       X-Amz-Cf-Id:
-      - Y10g49uzHdZN8vyHrQQGIY_fO0153eOahVBwOS0eZKjr9vHN39jXfA==
-      Age:
-      - '156'
+      - ANIUApJ1ekSzFO9tt-I0cjnNTWDN2sGVjfIazvBqvLUHPfMHwMfsTA==
     body:
       encoding: UTF-8
       string: '{"page":1,"results":[{"adult":false,"backdrop_path":"/zqkmTXzjkAgXmEWLRsY4UpTWCeo.jpg","genre_ids":[12,28,878],"id":11,"original_language":"en","original_title":"Star
@@ -155,5 +153,5 @@ http_interactions:
         Wars Kid,” breaks his silence to reflect on our hunger for content and the
         right to be forgotten in the digital age.","popularity":1.812,"poster_path":"/zspMlOFJ76g5KyfmucgnvnkJnuN.jpg","release_date":"2022-03-30","title":"Star
         Wars Kid: The Rise of the Digital Shadows","video":false,"vote_average":7.6,"vote_count":9}],"total_pages":10,"total_results":191}'
-  recorded_at: Wed, 09 Oct 2024 20:25:39 GMT
+  recorded_at: Wed, 09 Oct 2024 21:25:53 GMT
 recorded_with: VCR 6.3.1

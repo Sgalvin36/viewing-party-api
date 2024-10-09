@@ -2,11 +2,13 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.themoviedb.org/3/discover/movie?api_key=<THEMOVIEDB_API_KEY>&sort_by=popularity.desc
+    uri: https://api.themoviedb.org/3/discover/movie?action=index&controller=api/v1/movies&sort_by=popularity.desc
     body:
       encoding: US-ASCII
       string: ''
     headers:
+      Authorization:
+      - Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjOTZiMjkwMTc3OWJiMzQ3NTdjOTI1OTZjYjI0MjViYyIsIm5iZiI6MTcyODQyMTc1MC44MDE0MDgsInN1YiI6IjY3MDU0ODlhMWI5NmI4ZWY0YzY5ZGE5ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.lGlv1PkzpsP5SsH38fbmUprCl8_4HpPlA7OaIXe4Nl0
       User-Agent:
       - Faraday v2.10.1
       Accept-Encoding:
@@ -25,36 +27,34 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 09 Oct 2024 19:21:38 GMT
+      - Wed, 09 Oct 2024 21:25:53 GMT
       Server:
       - openresty
       Cache-Control:
-      - public, max-age=21906
+      - public, max-age=14451
       X-Memc:
       - HIT
       X-Memc-Key:
       - f7a89dec9d4f603186ad9e2a834a72ff
       X-Memc-Age:
-      - '4424'
+      - '11879'
       X-Memc-Expires:
-      - '21906'
+      - '14451'
       Etag:
       - W/"a939b7466941f2d10cc09dee6bc56ff6"
       Vary:
       - Accept-Encoding,accept-encoding
       - Origin
       X-Cache:
-      - Hit from cloudfront
+      - Miss from cloudfront
       Via:
-      - 1.1 f111faa3f37b2169cefb225b0f246234.cloudfront.net (CloudFront)
+      - 1.1 3fddcbe99f78632bf14e5e80e6c14058.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - DEN52-P2
       Alt-Svc:
       - h3=":443"; ma=86400
       X-Amz-Cf-Id:
-      - 5C-rejMjo36Vva3-IJCfG4R3M80Y3BWxwrego7I0M_NzaCeTZp0tWw==
-      Age:
-      - '3983'
+      - bqxDnXgXfKF-MUc4WSaF8C5DaWa4VMNdXXpXeuzWlyCOzzjGnE65hg==
     body:
       encoding: UTF-8
       string: '{"page":1,"results":[{"adult":false,"backdrop_path":"/yDHYTfA3R0jFYba16jBB1ef8oIt.jpg","genre_ids":[28,35,878],"id":533535,"original_language":"en","original_title":"Deadpool
@@ -154,5 +154,5 @@ http_interactions:
         the 1980s, a failed stand-up comedian is driven insane and turns to a life
         of crime and chaos in Gotham City while becoming an infamous psychopathic
         crime figure.","popularity":687.027,"poster_path":"/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg","release_date":"2019-10-01","title":"Joker","video":false,"vote_average":8.153,"vote_count":25360}],"total_pages":46435,"total_results":928691}'
-  recorded_at: Wed, 09 Oct 2024 20:28:01 GMT
+  recorded_at: Wed, 09 Oct 2024 21:25:53 GMT
 recorded_with: VCR 6.3.1

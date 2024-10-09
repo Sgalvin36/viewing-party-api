@@ -43,4 +43,9 @@ RSpec.describe "Movies API", type: :request do
             expect(movie[:attributes]).to have_key(:vote_average)
         end
     end
+
+    # it "returns detailed results for a single movie", :vcr do
+    #     params[:id] = 140607
+    
+    # end
 end
