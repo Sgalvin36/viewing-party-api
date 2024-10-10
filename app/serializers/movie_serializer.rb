@@ -4,7 +4,6 @@ class MovieSerializer
 
     def self.format_movie_response(movies)
         json = JSON.parse(movies)
-        # binding.pry
         { data:
             json["results"].map do |movie|
             {

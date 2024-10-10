@@ -5,8 +5,7 @@ class Api::V1::MoviesController < ApplicationController
         if params["query"] != nil
             response = MovieDbService.fetch_data("search/movie", params)
         else
-            params["sort_by"] = "popularity.desc"
-            response = MovieDbService.fetch_data("discover/movie", params)
+            response = MovieDbService.fetch_data("movie/top_rated", params)
         end
 
         render json: MovieSerializer.format_movie_response(response.body) if response.status == 200
