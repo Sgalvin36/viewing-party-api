@@ -50,5 +50,6 @@ RSpec.describe "Movies API", type: :request do
         get api_v1_movie_path(params[:id])
 
         expect(response).to be_successful
+        binding.pry
     end
 end
