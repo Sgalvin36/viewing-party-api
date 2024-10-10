@@ -10,4 +10,9 @@ RSpec.describe ViewingParty, type: :model do
         it { should validate_presence_of(:api_key) }
         it { should validate_presence_of(:host)}
     end
+
+    describe "relationships" do
+        it { should have_many(:party_guests)}
+        it { should have_many(:users).through(:party_guests)}
+    end
 end
