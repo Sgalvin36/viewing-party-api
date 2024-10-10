@@ -9,7 +9,7 @@ class Movie
                 :cast, 
                 :total_reviews, 
                 :reviews
-                
+
     def initialize(movie_data)
         @id = movie_data["id"]
         @title = movie_data["title"],
@@ -42,5 +42,6 @@ class Movie
                 "character": each["character"],
                 "actor": each["name"]
             }
+        end
     end
 end
