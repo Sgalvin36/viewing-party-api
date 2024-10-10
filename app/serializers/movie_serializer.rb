@@ -73,5 +73,3 @@ def sift_reviews(data)
         }
     end
 end
-#Need to finish formatting the response.
-#Will most likely need to create a method for crew and reviews to parse the data correctly

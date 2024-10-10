@@ -11,14 +11,4 @@ class MovieDbService
             req.params = params unless params.empty?
         end
     end
-
-    def self.get_record(path, param = {})
-        if params[:id] != nil
-            response = connection.get(path) do |req|
-                req.params = params unless params.empty?
-            end
-        elsif params[:query] != nil
-        
-        end
-    end
 end
