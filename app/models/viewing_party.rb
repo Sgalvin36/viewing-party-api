@@ -10,4 +10,13 @@ class ViewingParty < ApplicationRecord
     validates :movie_title, presence: true
     validates :api_key, presence: true
     validates :user_id, presence: true
+
+    def users=(invitees_array)
+        invitees_array.each do |invitee|
+            invited = User.find_by(id: invitee)
+            if invited.present?
+                self.party_guests.create(user: invited)
+            end    
+        end
+    end
 end

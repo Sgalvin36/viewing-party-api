@@ -10,3 +10,6 @@
 User.create!(name: "Danny DeVito", username: "danny_de_v", password: "jerseyMikesRox7")
 User.create!(name: "Dolly Parton", username: "dollyP", password: "Jolene123")
 User.create!(name: "Lionel Messi", username: "futbol_geek", password: "test123")
+User.create!(name: "Frank", username: "little_f", password: "HotDog42")
+User.create!(name: "Martin", username: "theMartin", password: "martythemartian32")
+User.create!(name: "Stu", username: "kookingfool", password: "eatmoreonions")

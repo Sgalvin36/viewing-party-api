@@ -16,4 +16,27 @@ RSpec.describe ViewingParty, type: :model do
         it { should have_many(:party_guests)}
         it { should have_many(:users).through(:party_guests)}
     end
+
+    describe "#users" do
+        it "creates a PartyGuest entry for each item in array" do
+            user = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+            user1 = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            params = {
+                name: "Friends for ever and ever",
+                start_time: "properly formatted start time",
+                end_time: "properly formatted end time",
+                movie_id: 456,
+                movie_title: "Princess Bride",
+                api_key: user.api_key,
+                user_id: user.id,
+            }
+            id_array = [user1.id, user2.id]
+            party = ViewingParty.create(params)
+            party.users = id_array 
+
+            expect(PartyGuest.count).to eq(2)
+            expect(party.users).to include(user1, user2)
+        end
+    end
 end
