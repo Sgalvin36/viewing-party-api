@@ -15,7 +15,9 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    user = User.find(params[:id])
+    user = User.find_by(id: params[:id])
+    return render json: ErrorSerializer.format_error(ErrorMessage.new("User not found", 404)), status: :not_found if user.nil?
+
     if user.api_key == request.headers["Authorization"]
       render json: UserSerializer.format_detailed_user(user)
     else

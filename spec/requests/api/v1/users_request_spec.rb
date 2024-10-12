@@ -155,7 +155,7 @@ RSpec.describe "Users API", type: :request do
     end
 
     it "handles different API key and user_id gently" do
-      user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
+      user = create(:user)
       users = create_list(:user, 4)
       parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[1].id, users[0].id])
 
@@ -167,12 +167,59 @@ RSpec.describe "Users API", type: :request do
         "CONTENT_TYPE" => "application/json",
         "Authorization" => users[0].api_key
       }
+
       get api_v1_user_path(params), headers: headers
-      expect(response).to_not be_successful
+      
       expected = {:message=>"Not the user.", :status=>401}
       json = JSON.parse(response.body, symbolize_names:true)
+
+      expect(response).to_not be_successful
       expect(json).to eq(expected)
     end
 
+    it "handles missing API key gently" do
+      user = create(:user)
+      users = create_list(:user, 4)
+      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[1].id, users[0].id])
+
+      params = {
+          "id": user.id
+      }
+
+      headers = {
+        "CONTENT_TYPE" => "application/json"
+      }
+      
+      get api_v1_user_path(params), headers: headers
+      
+      expected = {:message=>"Not logged in.", :status=>405}
+      json = JSON.parse(response.body, symbolize_names:true)
+      
+      expect(response).to_not be_successful
+      expect(json).to eq(expected)
+    end
+
+    it "handles invalid user ID gently" do
+      user = create(:user)
+      users = create_list(:user, 4)
+      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[1].id, users[0].id])
+
+      params = {
+          "id": 0
+      }
+
+      headers = {
+        "CONTENT_TYPE" => "application/json",
+        "Authorization" => user.api_key
+      }
+      
+      get api_v1_user_path(params), headers: headers
+      
+      expected = {:message=>"User not found", :status=>404}
+      json = JSON.parse(response.body, symbolize_names:true)
+      
+      expect(response).to_not be_successful
+      expect(json).to eq(expected)
+    end
   end
 end
