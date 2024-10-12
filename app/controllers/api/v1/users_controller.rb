@@ -16,7 +16,11 @@ class Api::V1::UsersController < ApplicationController
 
   def show
     user = User.find(params[:id])
-    render json: UserSerializer.format_detailed_user(user)
+    if user.api_key == request.headers["Authorization"]
+      render json: UserSerializer.format_detailed_user(user)
+    else
+      render json: ErrorSerializer.format_error(ErrorMessage.new("Not the user.", 401)), status: :unauthorized
+    end
   end
 
   private

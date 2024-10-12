@@ -24,8 +24,8 @@ class UserSerializer
         attributes: {
           name: user.name,
           username: user.username,
-          viewing_parties_hosted: [] ,
-          viewing_parties_invited: []
+          viewing_parties_hosted: user.hosted_parties,
+          viewing_parties_invited: user.attended_parties
         }
       }
     }

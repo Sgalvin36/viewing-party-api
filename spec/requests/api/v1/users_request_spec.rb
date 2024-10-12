@@ -70,9 +70,7 @@ RSpec.describe "Users API", type: :request do
 
   describe "Get All Users Endpoint" do
     it "retrieves all users but does not share any sensitive data" do
-      User.create!(name: "Tom", username: "myspace_creator", password: "test123")
-      User.create!(name: "Oprah", username: "oprah", password: "abcqwerty")
-      User.create!(name: "Beyonce", username: "sasha_fierce", password: "blueivy")
+      users = create_list(:user, 3)
 
       get api_v1_users_path
 
@@ -90,9 +88,7 @@ RSpec.describe "Users API", type: :request do
 
   describe "Get One User Endpoint" do
     it "successfully retrieves the correct user" do
-        user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
-        user2 = User.create!(name: "Oprah", username: "oprah", password: "abcqwerty")
-        user3 = User.create!(name: "Beyonce", username: "sasha_fierce", password: "blueivy")
+        user = create(:user)
 
         params = {
             "id": user.id
@@ -115,9 +111,9 @@ RSpec.describe "Users API", type: :request do
     end
 
     it "successfully retrieves the correct user and populates the viewing party arrays" do
-      user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
-      users = create_list(:user, 8)
-      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[4].id, users[0].id])
+      user = create(:user)
+      users = create_list(:user, 4)
+      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[1].id, users[2].id, users[0].id])
 
       params = {
           "id": user.id
@@ -137,6 +133,46 @@ RSpec.describe "Users API", type: :request do
       expect(json[:data][:attributes][:username]).to eq(user.username)
       expect(json[:data][:attributes][:viewing_parties_hosted].length).to eq 3
       expect(json[:data][:attributes][:viewing_parties_invited]).to eq([])
-  end
+
+      params = {
+          "id": users[0].id
+      }
+
+      headers = {
+        "CONTENT_TYPE" => "application/json",
+        "Authorization" => users[0].api_key
+      }
+      get api_v1_user_path(params), headers: headers
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names:true)
+      expect(json[:data][:id].to_i).to eq(users[0].id)
+      expect(json[:data][:type]).to eq("user")
+      expect(json[:data][:attributes][:name]).to eq(users[0].name)
+      expect(json[:data][:attributes][:username]).to eq(users[0].username)
+      expect(json[:data][:attributes][:viewing_parties_hosted]).to eq([])
+      expect(json[:data][:attributes][:viewing_parties_invited].length).to eq(3)
+    end
+
+    it "handles different API key and user_id gently" do
+      user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
+      users = create_list(:user, 4)
+      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[1].id, users[0].id])
+
+      params = {
+          "id": user.id
+      }
+
+      headers = {
+        "CONTENT_TYPE" => "application/json",
+        "Authorization" => users[0].api_key
+      }
+      get api_v1_user_path(params), headers: headers
+      expect(response).to_not be_successful
+      expected = {:message=>"Not the user.", :status=>401}
+      json = JSON.parse(response.body, symbolize_names:true)
+      expect(json).to eq(expected)
+    end
+
   end
 end
