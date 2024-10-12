@@ -21,7 +21,7 @@ class ViewingParty < ApplicationRecord
                 end
             end
         else
-            errors.add(:base, "Party could not be saved: #{self.errors.full_messages.to_sentence}")
+            errors.add(:base, "Party could not be saved")
         end
     end
 end
