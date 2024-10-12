@@ -1,4 +1,6 @@
 class Api::V1::UsersController < ApplicationController
+  before_action :authenticate_user, only: :show
+
   def create
     user = User.new(user_params)
     if user.save
@@ -10,6 +12,17 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     render json: UserSerializer.format_user_list(User.all)
+  end
+
+  def show
+    user = User.find_by(id: params[:id])
+    return render json: ErrorSerializer.format_error(ErrorMessage.new("User not found", 404)), status: :not_found if user.nil?
+
+    if user.api_key == request.headers["Authorization"]
+      render json: UserSerializer.format_detailed_user(user)
+    else
+      render json: ErrorSerializer.format_error(ErrorMessage.new("Not the user.", 401)), status: :unauthorized
+    end
   end
 
   private
