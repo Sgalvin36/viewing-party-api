@@ -14,9 +14,10 @@ class ViewingParty < ApplicationRecord
     def users=(invitees_array)
         if self.save
             invitees_array.each do |invitee|
-                invited = User.find_by(id: invitee.to_i)
-                if invited.present?
-                    self.party_guests.create(user: invited)
+                invite = User.find_by(id: invitee.to_i)
+                invited = PartyGuest.find_by(user_id: invitee.to_i)
+                if invite.present? && !invited.present?
+                    self.party_guests.create(user: invite)
                 end
             end
         else

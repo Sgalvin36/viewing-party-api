@@ -11,7 +11,15 @@ class Api::V1::ViewingPartiesController < ApplicationController
     end
 
     def update
-        # update viewing party, add/subtract viewers
+        viewing_party = ViewingParty.find_by(id: params[:id])
+        render json: ErrorSerializer.format_error(ErrorMessage.new("Viewing party not found", 400)), status: :bad_request if viewing_party.nil?
+
+        if viewing_party.api_key == request.headers["Authorization"]
+            viewing_party.users = params[:users]
+            render json: ViewingPartySerializer.new(viewing_party), status: :created
+        else
+            render json: ErrorSerializer.format_error(ErrorMessage.new(viewing_party.errors.full_messages.to_sentence, 400)), status: :bad_request
+        end
     end
 
     def destroy
@@ -28,9 +36,5 @@ class Api::V1::ViewingPartiesController < ApplicationController
         @user = User.find_by(api_key: key)
 
         render json: ErrorSerializer.format_error(ErrorMessage.new("Not logged in.", 405)), status: :method_not_allowed if @user.nil?
-    end
-
-    def params_error(exception)
-        render json: ErrorSerializer.format_errors(exception), status: :unprocessable_entity
     end
 end

@@ -16,14 +16,12 @@ RSpec.describe "ViewingParty API", type: :request do
                 user_id: user.id,
                 users: [user2.id, user3.id]
             }
-            
+
             headers = { 
                 "CONTENT_TYPE" => "application/json",
                 "Authorization" => user.api_key
             }
-
             post api_v1_viewing_parties_path(params), headers: headers
-            # binding.pry
             expect(response).to be_successful
         end
 
@@ -150,9 +148,10 @@ RSpec.describe "ViewingParty API", type: :request do
             user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
+                start_time: Time.now,
+                end_time: (Time.now + 2.hours),
                 movie_title: "Princess Bride",
+                movie_id: 12,
                 api_key: user.api_key,
                 user_id: user.id,
                 users: [user2.id, user3.id]
@@ -165,7 +164,7 @@ RSpec.describe "ViewingParty API", type: :request do
             post api_v1_viewing_parties_path(params), headers: headers
             expect(response).to_not be_successful
             expect(response.status).to eq 400
-            expected_error = {:message=>"Movie can't be blank", :status=>400}
+            expected_error = {:message=>"End time must be after start time", :status=>400}
             json = JSON.parse(response.body, symbolize_names:true)
 
             expect(json).to eq(expected_error)
@@ -200,5 +199,47 @@ RSpec.describe "ViewingParty API", type: :request do
             expect(json[:data][:relationships][:users][:data][0][:id].to_i).to eq(user2.id) 
             expect(json[:data][:relationships][:users][:data][1][:id].to_i).to eq(user3.id)
         end
+    end
+
+    describe "Update ViewingParty Endpoint" do
+        it "can add users to existing party" do
+            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+            user4 = User.create(name: "Jacob", username: "Thing1", password: "SuessforDays")
+            user5 = User.create(name: "John", username: "Thing2", password: "RedFishBlueFish")
+            params = {
+                name: "Friends for ever and ever",
+                start_time: Time.now,
+                end_time: (Time.now + 4.hours),
+                movie_id: 456,
+                movie_title: "Princess Bride",
+                api_key: user.api_key,
+                user_id: user.id,
+                users: [user2.id, user3.id]
+            }
+
+            party = ViewingParty.new(params)
+
+            params = {
+                "id": party.id,
+                "api_key": user.api_key,
+                "users": [user4.id]
+            }
+            headers = { 
+                "CONTENT_TYPE" => "application/json",
+                "Authorization" => user.api_key
+            }
+            put api_v1_viewing_party_path(params), headers: headers
+
+            expect(response).to be_successful
+            json = JSON.parse(response.body, symbolize_names:true)
+
+            expect(json[:data][:relationships][:users][:data].length).to eq 3
+            expect(json[:data][:relationships][:users][:data][0][:id].to_i).to eq(user2.id) 
+            expect(json[:data][:relationships][:users][:data][1][:id].to_i).to eq(user3.id)
+            expect(json[:data][:relationships][:users][:data][2][:id].to_i).to eq(user4.id)
+        end
+    
     end
 end
