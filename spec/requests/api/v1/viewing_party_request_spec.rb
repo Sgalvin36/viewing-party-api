@@ -255,16 +255,120 @@ RSpec.describe "ViewingParty API", type: :request do
             put api_v1_viewing_party_path(params), headers: headers
 
             expect(response).to_not be_successful
-            expected = {:message=>"Viewing party not found", :status=>400}
+            expected = {:message=>"Viewing party not found", :status=>404}
 
             json = JSON.parse(response.body, symbolize_names:true)
             expect(json).to eq(expected)
         end
 
-        xit "handles an invalid or missing API key correctly" do
+        it "handles a missing API key correctly" do
+            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+            user4 = User.create(name: "Jacob", username: "Thing1", password: "SuessforDays")
+            user5 = User.create(name: "John", username: "Thing2", password: "RedFishBlueFish")
+            params = {
+                name: "Friends for ever and ever",
+                start_time: Time.now,
+                end_time: (Time.now + 4.hours),
+                movie_id: 456,
+                movie_title: "Princess Bride",
+                api_key: user.api_key,
+                user_id: user.id,
+                users: [user2.id, user3.id]
+            }
+
+            party = ViewingParty.new(params)
+
+            params = {
+                "id": party.id,
+                "users": [user4.id, user5.id]
+            }
+            headers = { 
+                "CONTENT_TYPE" => "application/json",
+            }
+            put api_v1_viewing_party_path(params), headers: headers
+        
+            expected = {:message=>"Not logged in.", :status=>405}
+            expect(response).to_not be_successful
+            
+            json = JSON.parse(response.body, symbolize_names:true)
+            expect(json).to eq(expected)
         end
 
-        xit "handles an invalid user ID correctly" do
+        it "handles a missing API key correctly" do
+            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+            user4 = User.create(name: "Jacob", username: "Thing1", password: "SuessforDays")
+            user5 = User.create(name: "John", username: "Thing2", password: "RedFishBlueFish")
+            params = {
+                name: "Friends for ever and ever",
+                start_time: Time.now,
+                end_time: (Time.now + 4.hours),
+                movie_id: 456,
+                movie_title: "Princess Bride",
+                api_key: user2.api_key,
+                user_id: user2.id,
+                users: [user.id, user3.id]
+            }
+
+            party = ViewingParty.new(params)
+
+            params = {
+                "id": party.id,
+                "users": [user4.id, user5.id]
+            }
+            headers = { 
+                "CONTENT_TYPE" => "application/json",
+                "Authorization" => user.api_key
+            }
+            put api_v1_viewing_party_path(params), headers: headers
+        
+            expected = {:message=>"Not the host.", :status=>401}
+            expect(response).to_not be_successful
+            
+            json = JSON.parse(response.body, symbolize_names:true)
+            expect(json).to eq(expected)
+        end
+
+        it "handles an invalid user ID correctly" do
+            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+            user4 = User.create(name: "Jacob", username: "Thing1", password: "SuessforDays")
+            user5 = User.create(name: "John", username: "Thing2", password: "RedFishBlueFish")
+            params = {
+                name: "Friends for ever and ever",
+                start_time: Time.now,
+                end_time: (Time.now + 4.hours),
+                movie_id: 456,
+                movie_title: "Princess Bride",
+                api_key: user.api_key,
+                user_id: user.id,
+                users: [user2.id, user3.id]
+            }
+
+            party = ViewingParty.new(params)
+
+            params = {
+                "id": party.id,
+                "users": [user4.id, user5.id, 102331, user2.id, 4123120]
+            }
+            headers = { 
+                "CONTENT_TYPE" => "application/json",
+                "Authorization" => user.api_key
+            }
+            put api_v1_viewing_party_path(params), headers: headers
+            expect(response).to be_successful
+
+            json = JSON.parse(response.body, symbolize_names:true)
+            data = json[:data][:relationships][:users][:data]
+            expect(data.length).to eq 4
+            expect(data[0][:id].to_i).to eq(user2.id) 
+            expect(data[1][:id].to_i).to eq(user3.id)
+            expect(data[2][:id].to_i).to eq(user4.id)
+            expect(data[3][:id].to_i).to eq(user5.id)
         end
     end
 end
