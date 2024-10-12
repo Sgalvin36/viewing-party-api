@@ -12,12 +12,15 @@ class ViewingParty < ApplicationRecord
     validates :user_id, presence: true
 
     def users=(invitees_array)
-        self.save
-        invitees_array.each do |invitee|
-            invited = User.find_by(id: invitee.to_i)
-            if invited.present?
-                self.party_guests.create(user: invited)
-            end    
+        if self.save
+            invitees_array.each do |invitee|
+                invited = User.find_by(id: invitee.to_i)
+                if invited.present?
+                    self.party_guests.create(user: invited)
+                end
+            end
+        else
+            errors.add(:base, "Party could not be saved: #{self.errors.full_messages.to_sentence}")
         end
     end
 end

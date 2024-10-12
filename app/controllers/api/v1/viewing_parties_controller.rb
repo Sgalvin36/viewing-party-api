@@ -1,10 +1,9 @@
 class Api::V1::ViewingPartiesController < ApplicationController
-    # before_action :authenticate_user
+    before_action :authenticate_user
 
     def create
         viewing_party = ViewingParty.new(user_params)
         if viewing_party.save
-            # viewing_party.users = user_params[:users]
             render json: ViewingPartySerializer.new(viewing_party), status: :created
         else
             render json: ErrorSerializer.format_error(ErrorMessage.new(viewing_party.errors.full_messages.to_sentence, 400)), status: :bad_request
@@ -29,5 +28,9 @@ class Api::V1::ViewingPartiesController < ApplicationController
         @user = User.find_by(api_key: key)
 
         render json: ErrorSerializer.format_error(ErrorMessage.new("Not logged in.", 405)), status: :method_not_allowed if @user.nil?
+    end
+
+    def params_error(exception)
+        render json: ErrorSerializer.format_errors(exception), status: :unprocessable_entity
     end
 end
