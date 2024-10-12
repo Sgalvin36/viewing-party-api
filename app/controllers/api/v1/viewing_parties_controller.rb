@@ -12,7 +12,7 @@ class Api::V1::ViewingPartiesController < ApplicationController
 
     def update
         viewing_party = ViewingParty.find_by(id: params[:id])
-        render json: ErrorSerializer.format_error(ErrorMessage.new("Viewing party not found", 400)), status: :bad_request if viewing_party.nil?
+        return render json: ErrorSerializer.format_error(ErrorMessage.new("Viewing party not found", 400)), status: :not_found if viewing_party.nil?
 
         if viewing_party.api_key == request.headers["Authorization"]
             viewing_party.users = params[:users]

@@ -223,8 +223,7 @@ RSpec.describe "ViewingParty API", type: :request do
 
             params = {
                 "id": party.id,
-                "api_key": user.api_key,
-                "users": [user4.id]
+                "users": [user4.id, user5.id]
             }
             headers = { 
                 "CONTENT_TYPE" => "application/json",
@@ -235,11 +234,37 @@ RSpec.describe "ViewingParty API", type: :request do
             expect(response).to be_successful
             json = JSON.parse(response.body, symbolize_names:true)
 
-            expect(json[:data][:relationships][:users][:data].length).to eq 3
+            expect(json[:data][:relationships][:users][:data].length).to eq 4
             expect(json[:data][:relationships][:users][:data][0][:id].to_i).to eq(user2.id) 
             expect(json[:data][:relationships][:users][:data][1][:id].to_i).to eq(user3.id)
             expect(json[:data][:relationships][:users][:data][2][:id].to_i).to eq(user4.id)
+            expect(json[:data][:relationships][:users][:data][3][:id].to_i).to eq(user5.id)
         end
     
+        it "handles an invalid viewing party gently" do
+            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
+            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
+            params = {
+                "id": 223509132460,
+                "users": [user2.id]
+            }
+            headers = { 
+                "CONTENT_TYPE" => "application/json",
+                "Authorization" => user.api_key
+            }
+            put api_v1_viewing_party_path(params), headers: headers
+
+            expect(response).to_not be_successful
+            expected = {:message=>"Viewing party not found", :status=>400}
+
+            json = JSON.parse(response.body, symbolize_names:true)
+            expect(json).to eq(expected)
+        end
+
+        xit "handles an invalid or missing API key correctly" do
+        end
+
+        xit "handles an invalid user ID correctly" do
+        end
     end
 end
