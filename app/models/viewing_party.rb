@@ -12,8 +12,9 @@ class ViewingParty < ApplicationRecord
     validates :user_id, presence: true
 
     def users=(invitees_array)
+        self.save
         invitees_array.each do |invitee|
-            invited = User.find_by(id: invitee)
+            invited = User.find_by(id: invitee.to_i)
             if invited.present?
                 self.party_guests.create(user: invited)
             end    

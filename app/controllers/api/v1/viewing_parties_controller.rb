@@ -2,10 +2,8 @@ class Api::V1::ViewingPartiesController < ApplicationController
     # before_action :authenticate_user
 
     def create
-        Rails.logger.debug
         viewing_party = ViewingParty.new(user_params)
         if viewing_party.save
-            binding.pry
             # viewing_party.users = user_params[:users]
             render json: ViewingPartySerializer.new(viewing_party), status: :created
         else

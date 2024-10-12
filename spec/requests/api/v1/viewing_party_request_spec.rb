@@ -18,14 +18,14 @@ RSpec.describe "ViewingParty API", type: :request do
                 movie_title: "Princess Bride",
                 api_key: user.api_key,
                 user_id: user.id,
-                "users": [user2.id, user3.id]
+                users: [user2.id, user3.id]
             }
 
             post api_v1_viewing_parties_path(params)
 
             expect(response).to be_successful
             json = JSON.parse(response.body, symbolize_names:true)
-            binding.pry
+
             expect(json[:data]).to have_key(:id)
             expect(json[:data][:type]).to eq("viewing_party")
             expect(json[:data][:attributes][:name]).to eq("Friends for ever and ever")
@@ -33,9 +33,9 @@ RSpec.describe "ViewingParty API", type: :request do
             expect(json[:data][:attributes][:end_time]).to eq("properly formatted end time")
             expect(json[:data][:attributes][:movie_id]).to eq(456)
             expect(json[:data][:attributes][:movie_title]).to eq("Princess Bride")
+            expect(json[:data][:relationships][:users][:data].length).to eq 2
         end
 
-        it "populates the viewing party appropriately" do
-        end
+
     end
 end
