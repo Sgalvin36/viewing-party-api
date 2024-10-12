@@ -9,4 +9,10 @@ RSpec.describe User, type: :model do
     it { should have_secure_password }
     it { should have_secure_token(:api_key) }
   end
+
+  describe "relationships" do
+    it { should have_many(:party_guests)}
+    it { should have_many(:attended_parties).through(:party_guests)}
+    it { should have_many(:hosted_parties)}
+end
 end

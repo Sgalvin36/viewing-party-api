@@ -28,3 +28,7 @@ This will return JSON showing the top 20 best voted movies that is within the da
 `GET /api/v1/movies/index` with params["query"]
 
 This will return JSON showing movies that match the search criteria.
+
+`GET /api/v1/movies/:id` 
+
+This will return JSON showing a specific movie, extra details, cast, and reviews that match the given id.
