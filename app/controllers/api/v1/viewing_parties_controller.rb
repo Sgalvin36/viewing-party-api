@@ -22,19 +22,8 @@ class Api::V1::ViewingPartiesController < ApplicationController
         end
     end
 
-    def destroy
-        # destroy viewing party, and associated party guest associations
-    end
-
     private
     def user_params
         params.permit(:name, :start_time, :end_time, :movie_id, :movie_title, :user_id, :api_key, users: [])
-    end
-    
-    def authenticate_user
-        key = request.headers["Authorization"]
-        @user = User.find_by(api_key: key)
-
-        render json: ErrorSerializer.format_error(ErrorMessage.new("Not logged in.", 405)), status: :method_not_allowed if @user.nil?
     end
 end

@@ -16,4 +16,18 @@ class UserSerializer
         end
     }
   end
+
+  def self.format_detailed_user(user)
+    { data: {
+        id: user.id.to_s,
+        type: "user",
+        attributes: {
+          name: user.name,
+          username: user.username,
+          viewing_parties_hosted: [] ,
+          viewing_parties_invited: []
+        }
+      }
+    }
+  end
 end

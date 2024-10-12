@@ -87,4 +87,56 @@ RSpec.describe "Users API", type: :request do
       expect(json[:data][0][:attributes]).to_not have_key(:api_key)
     end
   end
+
+  describe "Get One User Endpoint" do
+    it "successfully retrieves the correct user" do
+        user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
+        user2 = User.create!(name: "Oprah", username: "oprah", password: "abcqwerty")
+        user3 = User.create!(name: "Beyonce", username: "sasha_fierce", password: "blueivy")
+
+        params = {
+            "id": user.id
+        }
+
+        headers = {
+          "CONTENT_TYPE" => "application/json",
+          "Authorization" => user.api_key
+        }
+        get api_v1_user_path(params), headers: headers
+        expect(response).to be_successful
+
+        json = JSON.parse(response.body, symbolize_names:true)
+        expect(json[:data][:id].to_i).to eq(user.id)
+        expect(json[:data][:type]).to eq("user")
+        expect(json[:data][:attributes][:name]).to eq(user.name)
+        expect(json[:data][:attributes][:username]).to eq(user.username)
+        expect(json[:data][:attributes][:viewing_parties_hosted]).to eq([])
+        expect(json[:data][:attributes][:viewing_parties_invited]).to eq([])
+    end
+
+    it "successfully retrieves the correct user and populates the viewing party arrays" do
+      user = User.create(name: "Tom", username: "myspace_creator", password: "test123")
+      users = create_list(:user, 8)
+      parties_hosted = create_list(:viewing_party, 3, user_id: user.id, api_key: user.api_key, users: [users[2].id, users[4].id, users[0].id])
+
+      params = {
+          "id": user.id
+      }
+
+      headers = {
+        "CONTENT_TYPE" => "application/json",
+        "Authorization" => user.api_key
+      }
+      get api_v1_user_path(params), headers: headers
+      expect(response).to be_successful
+
+      json = JSON.parse(response.body, symbolize_names:true)
+      expect(json[:data][:id].to_i).to eq(user.id)
+      expect(json[:data][:type]).to eq("user")
+      expect(json[:data][:attributes][:name]).to eq(user.name)
+      expect(json[:data][:attributes][:username]).to eq(user.username)
+      expect(json[:data][:attributes][:viewing_parties_hosted].length).to eq 3
+      expect(json[:data][:attributes][:viewing_parties_invited]).to eq([])
+  end
+  end
 end

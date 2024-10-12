@@ -1,4 +1,6 @@
 class Api::V1::UsersController < ApplicationController
+  before_action :authenticate_user, only: :show
+
   def create
     user = User.new(user_params)
     if user.save
@@ -10,6 +12,11 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     render json: UserSerializer.format_user_list(User.all)
+  end
+
+  def show
+    user = User.find(params[:id])
+    render json: UserSerializer.format_detailed_user(user)
   end
 
   private
