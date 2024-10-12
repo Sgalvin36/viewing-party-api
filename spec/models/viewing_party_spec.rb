@@ -38,5 +38,13 @@ RSpec.describe ViewingParty, type: :model do
             expect(PartyGuest.count).to eq(2)
             expect(party.users).to include(user1, user2)
         end
+
+        it 'handles being unable to save the party gently' do
+            viewing_party = ViewingParty.new
+            allow(viewing_party).to receive(:save).and_return(false)
+            viewing_party.users = [2,3,5]
+
+            expect(viewing_party.errors[:base]).to eq(["Party could not be saved"])
+        end
     end
 end
