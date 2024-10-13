@@ -63,4 +63,17 @@ RSpec.describe "Movies API", type: :request do
         expect(json[:data][:attributes][:total_reviews]).to eq 8
         expect(json[:data][:attributes][:reviews].length).to eq 5
     end
+
+    it "returns suggested movies based off of the provided movie", :vcr do
+        params = { id: 140607, similar: true }
+
+        get api_v1_movie_path(params)
+        
+        expect(response).to be_successful
+        json = JSON.parse(response.body, symbolize_names:true)
+        json[:data].each do |movie|
+            expect(movie[:attributes]).to have_key(:title)
+            expect(movie[:attributes]).to have_key(:vote_average)
+        end
+    end
 end
