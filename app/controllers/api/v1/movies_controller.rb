@@ -1,5 +1,4 @@
 class Api::V1::MoviesController < ApplicationController
-    # before_action: set_connection
     
     def index
         if params["query"] != nil
