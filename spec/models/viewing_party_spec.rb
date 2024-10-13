@@ -24,9 +24,9 @@ RSpec.describe ViewingParty, type: :model do
             user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
-                movie_id: 456,
+                start_time: 2.hours.from_now,
+                end_time: 4.hours.from_now,
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: user.api_key,
                 user_id: user.id,

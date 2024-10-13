@@ -1,7 +1,7 @@
 class Api::V1::ViewingPartiesController < ApplicationController
     before_action :authenticate_user
 
-    def create
+    def create        
         viewing_party = ViewingParty.new(user_params)
         if viewing_party.save
             render json: ViewingPartySerializer.new(viewing_party), status: :created
