@@ -8,13 +8,15 @@ class Movie
                 :summary, 
                 :cast, 
                 :total_reviews, 
-                :reviews
+                :reviews,
+                :duration
 
     def initialize(movie_data)
         @id = movie_data["id"]
         @title = movie_data["title"]
         @release_year = movie_data["release_date"].split("-")[0]
         @vote_average = movie_data["vote_average"]
+        @duration = movie_data["runtime"].to_i
         @runtime = time_convert(movie_data["runtime"].to_i)
         @genres = clean_genres(movie_data["genres"])
         @summary = movie_data["overview"]

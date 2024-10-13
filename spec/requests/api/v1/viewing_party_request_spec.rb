@@ -6,9 +6,9 @@ RSpec.describe "ViewingParty API", type: :request do
             users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
-                movie_id: 456,
+                start_time: Time.current,
+                end_time: (Time.current + 2.hours),
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -27,9 +27,9 @@ RSpec.describe "ViewingParty API", type: :request do
             users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
-                movie_id: 456,
+                start_time: "2024-10-13 20:46:52 UTC",
+                end_time: "2024-10-13 23:46:52 UTC",
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -49,9 +49,9 @@ RSpec.describe "ViewingParty API", type: :request do
             expect(json[:data]).to have_key(:id)
             expect(json[:data][:type]).to eq("viewing_party")
             expect(json[:data][:attributes][:name]).to eq("Friends for ever and ever")
-            expect(json[:data][:attributes][:start_time]).to eq("properly formatted start time")
-            expect(json[:data][:attributes][:end_time]).to eq("properly formatted end time")
-            expect(json[:data][:attributes][:movie_id]).to eq(456)
+            expect(json[:data][:attributes][:start_time]).to eq("2024-10-13 20:46:52 UTC")
+            expect(json[:data][:attributes][:end_time]).to eq("2024-10-13 23:46:52 UTC")
+            expect(json[:data][:attributes][:movie_id]).to eq(2493)
             expect(json[:data][:attributes][:movie_title]).to eq("Princess Bride")
             expect(json[:data][:relationships][:users][:data].length).to eq 2
         end
@@ -60,9 +60,9 @@ RSpec.describe "ViewingParty API", type: :request do
             users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
-                movie_id: 456,
+                start_time: Time.current,
+                end_time: (Time.current + 2.hours),
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -86,8 +86,8 @@ RSpec.describe "ViewingParty API", type: :request do
             users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
+                start_time: Time.current,
+                end_time: (Time.current + 2.hours),
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -107,41 +107,40 @@ RSpec.describe "ViewingParty API", type: :request do
             expect(json).to eq(expected_error)
         end
 
-        xit "returns an error if movie time is longer than party duration" do
-            user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
-            user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
-            user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
+        it "returns an error if movie time is longer than party duration" do
+            users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
+                start_time: Time.current,
+                end_time: (Time.current + 20.minutes),
                 movie_title: "Princess Bride",
-                api_key: user.api_key,
-                user_id: user.id,
-                users: [user2.id, user3.id]
+                movie_id: 2493,
+                api_key: users[0].api_key,
+                user_id: users[0].id,
+                users: [users[1].id, users[2].id]
             }
 
             headers = { 
                 "CONTENT_TYPE" => "application/json",
-                "Authorization" => user.api_key
+                "Authorization" => users[0].api_key
             }
             post api_v1_viewing_parties_path(params), headers: headers
             expect(response).to_not be_successful
             expect(response.status).to eq 400
-            expected_error = {:message=>"Movie can't be blank", :status=>400}
+            expected_error = {:message=>"End time cannot be less then length of movie", :status=>400}
             json = JSON.parse(response.body, symbolize_names:true)
 
             expect(json).to eq(expected_error)
         end
 
-        xit "returns an error if end time is before start time" do
+        it "returns an error if end time is before start time" do
             user = User.create(name: "Joey", username: "Friend#1", password: "Sitcomking")
             user2 = User.create(name: "Joey", username: "Friend#2", password: "Friendsthebest")
             user3 = User.create(name: "Joey", username: "Friend#3", password: "Onlyfriends")
             params = {
                 name: "Friends for ever and ever",
-                start_time: Time.now,
-                end_time: (Time.now + 2.hours),
+                start_time: 2.hours.from_now,
+                end_time: 1.hour.from_now,
                 movie_title: "Princess Bride",
                 movie_id: 12,
                 api_key: user.api_key,
@@ -156,7 +155,7 @@ RSpec.describe "ViewingParty API", type: :request do
             post api_v1_viewing_parties_path(params), headers: headers
             expect(response).to_not be_successful
             expect(response.status).to eq 400
-            expected_error = {:message=>"End time must be after start time", :status=>400}
+            expected_error = {:message=>"End time cannot be before the start time", :status=>400}
             json = JSON.parse(response.body, symbolize_names:true)
 
             expect(json).to eq(expected_error)
@@ -166,9 +165,9 @@ RSpec.describe "ViewingParty API", type: :request do
             users = create_list(:user, 3)
             params = {
                 name: "Friends for ever and ever",
-                start_time: "properly formatted start time",
-                end_time: "properly formatted end time",
-                movie_id: 456,
+                start_time: Time.current,
+                end_time: (Time.current + 2.hours),
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -198,7 +197,7 @@ RSpec.describe "ViewingParty API", type: :request do
                 name: "Friends for ever and ever",
                 start_time: Time.now,
                 end_time: (Time.now + 4.hours),
-                movie_id: 456,
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: users[0].api_key,
                 user_id: users[0].id,
@@ -257,7 +256,7 @@ RSpec.describe "ViewingParty API", type: :request do
                 name: "Friends for ever and ever",
                 start_time: Time.now,
                 end_time: (Time.now + 4.hours),
-                movie_id: 456,
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: user.api_key,
                 user_id: user.id,
@@ -292,7 +291,7 @@ RSpec.describe "ViewingParty API", type: :request do
                 name: "Friends for ever and ever",
                 start_time: Time.now,
                 end_time: (Time.now + 4.hours),
-                movie_id: 456,
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: user2.api_key,
                 user_id: user2.id,
@@ -328,7 +327,7 @@ RSpec.describe "ViewingParty API", type: :request do
                 name: "Friends for ever and ever",
                 start_time: Time.now,
                 end_time: (Time.now + 4.hours),
-                movie_id: 456,
+                movie_id: 2493,
                 movie_title: "Princess Bride",
                 api_key: user.api_key,
                 user_id: user.id,
