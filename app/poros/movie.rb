@@ -12,14 +12,14 @@ class Movie
 
     def initialize(movie_data)
         @id = movie_data["id"]
-        @title = movie_data["title"],
-        @release_year = movie_data["release_date"].split("-")[0],
-        @vote_average = movie_data["vote_average"],
-        @runtime = time_convert(movie_data["runtime"].to_i),
-        @genres = clean_genres(movie_data["genres"]),
-        @summary = movie_data["overview"],
-        @cast = sift_cast(movie_data),
-        @total_reviews = movie_data["reviews"]["total_results"],
+        @title = movie_data["title"]
+        @release_year = movie_data["release_date"].split("-")[0]
+        @vote_average = movie_data["vote_average"]
+        @runtime = time_convert(movie_data["runtime"].to_i)
+        @genres = clean_genres(movie_data["genres"])
+        @summary = movie_data["overview"]
+        @cast = sift_cast(movie_data)
+        @total_reviews = movie_data["reviews"]["total_results"]
         @reviews = sift_reviews(movie_data)
     end
 
@@ -41,6 +41,15 @@ class Movie
             {
                 "character": each["character"],
                 "actor": each["name"]
+            }
+        end
+    end
+
+    def sift_reviews(data)
+        results = data["reviews"]["results"].first(5).map do |each|
+            {
+                "author": each["author"],
+                "review": each["content"]
             }
         end
     end
