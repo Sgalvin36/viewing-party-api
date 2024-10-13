@@ -52,7 +52,7 @@ RSpec.describe "Movies API", type: :request do
         expect(response).to be_successful
         json = JSON.parse(response.body, symbolize_names:true)
 
-        expect(json[:data][:id]).to eq "140607"
+        expect(json[:data][:id]).to eq 140607
         expect(json[:data][:type]).to eq "movie"
         expect(json[:data][:attributes][:title]).to eq "Star Wars: The Force Awakens"
         expect(json[:data][:attributes][:release_year]).to eq "2015"
