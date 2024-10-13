@@ -40,6 +40,17 @@ To find detailed information about a specific movie to include cast members and 
 params = { "id": 4 }
 ```
 
+### Getting similar movies based of one Movie
+`GET /api/v1/movies/:id` **No authentication needed** <br>
+To find similar movies to the specific movie that is searched.
+#### Parameters
+**"id"**: integer, *required*
+**"similar"**: boolean, *required*
+#### Example of Parameters
+```
+params = { "id": 4, "similar": true }
+```
+
 ## Viewing Party Endpoints
 ### Creating a Viewing Party
 `POST /api/v1/viewing_parties` **Authentication needed and should be included in header** <br>
