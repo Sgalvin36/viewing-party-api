@@ -4,7 +4,6 @@ RSpec.describe ViewingParty, type: :model do
     describe "validations" do
         it { should validate_presence_of(:name) }
         it { should validate_presence_of(:start_time) }
-        it { should validate_presence_of(:end_time) }
         it { should validate_presence_of(:movie_id) }
         it { should validate_presence_of(:movie_title)}
         it { should validate_presence_of(:api_key) }
@@ -45,6 +44,63 @@ RSpec.describe ViewingParty, type: :model do
             viewing_party.users = [2,3,5]
 
             expect(viewing_party.errors[:base]).to eq(["Party could not be saved"])
+        end
+
+        it "handles party validation gently" do
+            json_data = {
+            "id"=> "345",
+            "title"=> "The Best movie EVER",
+            "release_date"=> "2012-10-10",
+            "vote_average"=> 9.99,
+            "runtime"=> 921,
+            "genres"=> [{"name"=> "mystery"}, {"name"=> "comedy"}],
+            "overview"=> "One of the finest movies ever made, but no one has every heard of",
+            "credits" =>{
+                "cast"=> [
+                    {"actor"=> "Steven Forest", "character"=> "Stone-Cold Austin"},
+                    {"actor"=> "Clementine Jones", "character"=> "Mrs. Frazzle"},
+                    {"actor"=> "Courtney Country", "character"=> "Cadaver #1"}
+                ]},
+            "reviews"=> {
+                "totals_results"=> 829,
+                "results"=> [
+                    {"author"=> "Sir Author the auther", "content"=> "Bloody magnificent"},
+                    {"author"=> "Bob", "content"=> "Was alright"},
+                    {"author"=> "Mom with a claws", "content"=> "Not enough cats"},
+                    {"author"=> "Joseph", "content"=> "I thought this was Batman, where is Batman?"}
+                ]
+            }}
+            
+            allow(MovieDbService).to receive(:fetch_data).and_return(
+                double(status: 200, body: json_data.to_json)
+            )
+            party = ViewingParty.new({
+                name: "Friends for ever and ever",
+                start_time: 2.hours.from_now,
+                end_time: 1.hour.from_now,
+                movie_title: "Princess Bride",
+                movie_id: 12,
+                api_key: "test_api_key",
+                user_id: 1,
+                users: [2, 3]
+            })
+
+            expect(party.save).to be_falsey
+            expect(party.errors[:end_time]).to include("cannot be before the start time")
+
+            party = ViewingParty.new({
+                name: "Friends for ever and ever",
+                start_time: 1.hours.from_now,
+                end_time: 2.hour.from_now,
+                movie_title: "Princess Bride",
+                movie_id: 12,
+                api_key: "test_api_key",
+                user_id: 1,
+                users: [2, 3]
+            })
+
+            expect(party.save).to be_falsey
+            expect(party.errors[:end_time]).to include("cannot be less then length of movie")
         end
     end
 end
